@@ -14,10 +14,12 @@ class Background extends PureComponent {
 
         let mousePos = paper.view.center.add([paper.view.bounds.width / 3, 100]);
         let position = paper.view.center;
+        var maxX = window.outerWidth;
+        var maxY = window.outerHeight;
 
         const strength = 10;
         const symbol = new paper.Symbol(star);
-        const stars = new Array(100)
+        const stars = new Array(50)
             .fill(0)
             .map((_, i, arr) => {
                 const clone = symbol.place(randomPoint());
@@ -28,10 +30,20 @@ class Background extends PureComponent {
                 }
                 return clone;
             });
-        
+            
         paper.view.onMouseMove = (event) => {
             mousePos = event.point;
         };
+
+        window.addEventListener("deviceorientation", function(event) {
+            let x = event.beta;
+            let y = event.gamma;
+            if (x >  90) { x =  90};
+            if (x < -90) { x = -90};
+            x += 90;
+            y += 90;
+            mousePos = paper.view.center.add([maxX*x/180, maxY*y/180]);
+        });
 
         this.canvas.addEventListener('mousewheel', (event) => {
             stars.forEach((item) => {
